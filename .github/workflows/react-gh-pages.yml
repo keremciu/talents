@@ -26,6 +26,8 @@ jobs:
         shell: bash
       - run : npm run build
         shell: bash
+        env:
+          PUBLIC_URL: /talents
       - name: upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
