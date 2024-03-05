@@ -1,0 +1,67 @@
+{
+  "people": [
+    {
+      "id": 1,
+      "name": "John Smith",
+      "jobTitle": "Software Developer",
+      "country": "Germany",
+      "salary": 120000,
+      "currency": "EUR",
+      "employment": "employee"
+    },
+    {
+      "id": 2,
+      "name": "Emma Johnson",
+      "jobTitle": "Musician",
+      "country": "Italy",
+      "salary": 70000,
+      "currency": "EUR",
+      "employment": "contractor"
+    },
+    {
+      "id": 3,
+      "name": "Michael Brown",
+      "jobTitle": "Data Scientist",
+      "country": "France",
+      "salary": 80000,
+      "currency": "EUR",
+      "employment": "employee"
+    },
+    {
+      "id": 4,
+      "name": "Sarah Davis",
+      "jobTitle": "CEO",
+      "country": "United States",
+      "salary": 200000,
+      "currency": "USD",
+      "employment": "employee"
+    },
+    {
+      "id": 5,
+      "name": "David Wilson",
+      "jobTitle": "Customer Support",
+      "country": "Czech Republic",
+      "salary": 50000,
+      "currency": "USD",
+      "employment": "employee"
+    },
+    {
+      "id": 6,
+      "name": "Emily Taylor",
+      "jobTitle": "Product Designer",
+      "country": "United Kingdom",
+      "salary": 80000,
+      "currency": "GBP",
+      "employment": "employee"
+    },
+    {
+      "id": 7,
+      "name": "Daniel Clark",
+      "jobTitle": "QA Engineer",
+      "country": "Germany",
+      "salary": 70000,
+      "currency": "EUR",
+      "employment": "contractor"
+    }
+  ]
+}
