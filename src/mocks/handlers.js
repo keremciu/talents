@@ -1,10 +1,9 @@
 import { http, HttpResponse, delay } from 'msw';
 
 import db from 'server/db.json';
-import { peopleURLObject } from 'pages/People/People';
+import { peopleURLObject } from 'pages/People/People.fetcher';
 
 const IS_NODE_PROCESS = typeof process !== 'undefined';
-// console.log('IS_NODE', IS_NODE_PROCESS);
 
 export const handlers = [
   http.get(peopleURLObject.toString(), async ({ request }, ...everything) => {

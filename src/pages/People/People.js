@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { Await, useLoaderData, defer, useNavigation } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { peopleQuery } from './People.fetcher';
 import PeopleTable from './PeopleTable';
 import PeopleHeader from './PeopleHeader';
 import PeopleFilters from './PeopleFilters';
@@ -14,27 +15,12 @@ const Container = styled.main`
   max-width: var(--layout-width);
 `;
 
-export const peopleURLObject = new URL('people', process.env.REACT_APP_API_URL);
-
-export async function loader({ request }) {
-  const searchParams = new URL(request.url).searchParams;
-  const copySearchParams = Array.from(searchParams);
-  for (const [key, value] of copySearchParams) {
-    if (value === '') {
-      searchParams.delete(key);
-    }
-  }
-  const updatedURLObject = new URL(peopleURLObject.toString());
-  updatedURLObject.search = searchParams;
-  return defer({
-    peopleData: fetch(updatedURLObject.toString(), { signal: request.signal }).then((response) => {
-      if (!response.ok) {
-        throw new Error('GET /people Network response failed!');
-      }
-      return response.json();
-    }),
-  });
-}
+export const loader =
+  (queryClient) =>
+  async ({ request }) =>
+    defer({
+      peopleData: queryClient.ensureQueryData(peopleQuery(request)),
+    });
 
 export default function People() {
   const data = useLoaderData();

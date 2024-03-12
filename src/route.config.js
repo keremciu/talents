@@ -11,7 +11,7 @@ function ErrorBoundary() {
   return <div>Something went wrong.</div>;
 }
 
-export const routes = [
+export const routes = (queryClient) => [
   {
     path: '/',
     element: <App />,
@@ -21,7 +21,7 @@ export const routes = [
         index: true,
         path: 'people',
         element: <People />,
-        loader: peopleLoader,
+        loader: peopleLoader(queryClient),
       },
       {
         path: 'people/new',
