@@ -1,16 +1,39 @@
-import { renderWithRouter, screen, within, waitFor, createTextContentMatcher } from 'test-utils';
+import {
+  renderWithRouter,
+  screen,
+  within,
+  waitFor,
+  createTextContentMatcher,
+  queryClient,
+} from 'test-utils';
 import userEvent from '@testing-library/user-event';
 import db from 'server/db.json';
 import { TEXTS } from './People.texts';
 import { EmploymentLabel, formatWithCurrency } from './PeopleTable/PeopleTable';
 import { countWithPluralAddon } from './PeopleHeader/PeopleHeader';
-import { peopleURLObject } from './People';
+import { peopleURLObject } from './People.fetcher';
 
 import { server } from 'mocks/server';
 import { http, HttpResponse } from 'msw';
 
+const assertPeopleTable = (tableData) =>
+  tableData.forEach((person) => {
+    const row = screen.getByRole('cell', { name: person.name }).closest('tr');
+    expect(within(row).getByText(person.jobTitle)).toBeInTheDocument();
+    expect(within(row).getByText(person.country)).toBeInTheDocument();
+    expect(
+      within(row).getByText(
+        createTextContentMatcher(
+          `${person.currency} ${formatWithCurrency(person.currency, person.salary)}`,
+        ),
+      ),
+    ).toBeInTheDocument();
+    expect(within(row).getByText(EmploymentLabel[person.employment])).toBeInTheDocument();
+  });
+
 describe('People', () => {
   describe('people page header', () => {
+    beforeEach(async () => await queryClient.invalidateQueries());
     it('renders page title and add member button', async () => {
       renderWithRouter('/people');
       await waitFor(() => screen.findByRole('link', { name: new RegExp(TEXTS.addMember) }));
@@ -33,35 +56,6 @@ describe('People', () => {
   });
 
   describe('people table', () => {
-    const assertPeopleTable = (data) =>
-      data.forEach((person) => {
-        const row = screen.getByRole('cell', { name: person.name }).closest('tr');
-        expect(within(row).getByText(person.jobTitle)).toBeInTheDocument();
-        expect(within(row).getByText(person.country)).toBeInTheDocument();
-        expect(
-          within(row).getByText(
-            createTextContentMatcher(
-              `${person.currency} ${formatWithCurrency(person.currency, person.salary)}`,
-            ),
-          ),
-        ).toBeInTheDocument();
-        expect(within(row).getByText(EmploymentLabel[person.employment])).toBeInTheDocument();
-      });
-
-    it('renders error message when GET /people request fails', async () => {
-      server.use(
-        http.get(
-          peopleURLObject.toString(),
-          () => {
-            return HttpResponse.error();
-          },
-          { once: true },
-        ),
-      );
-      renderWithRouter('/people');
-      await waitFor(() => screen.findByText(/something went wrong. couldn't load people!/i));
-    });
-
     it('renders people table with headers and right data', async () => {
       renderWithRouter('/people');
       await waitFor(() =>
@@ -71,6 +65,22 @@ describe('People', () => {
       expect(screen.getByRole('columnheader', { name: 'Role' })).toBeInTheDocument();
       expect(screen.getByRole('columnheader', { name: 'Type' })).toBeInTheDocument();
       assertPeopleTable(db.people);
+    });
+
+    describe('when GET /people request fails', () => {
+      it('render error message', async () => {
+        server.use(
+          http.get(
+            peopleURLObject.toString(),
+            () => {
+              return HttpResponse.error();
+            },
+            { once: true },
+          ),
+        );
+        renderWithRouter('/people');
+        await waitFor(() => screen.findByText(/something went wrong. couldn't load people!/i));
+      });
     });
 
     describe('when user changes search filter input', () => {

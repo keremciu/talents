@@ -1,0 +1,21 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - run: npm ci
+        shell: bash
+      - run: npm run build
+        shell: bash
+        env:
+          PUBLIC_URL: /talents
+      - run: npm test

@@ -16,10 +16,11 @@ export const peopleQuery = (request) => {
       const updatedURLObject = new URL(peopleURLObject.toString());
       updatedURLObject.search = params;
       return fetch(updatedURLObject.toString(), { signal: request.signal }).then((response) => {
-        if (!response.ok) {
+        if (response.ok) {
+          return response.json();
+        } else {
           throw new Error('GET /people Network response failed!');
         }
-        return response.json();
       });
     },
   });
